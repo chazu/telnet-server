@@ -1,9 +1,9 @@
-require 'activerecord'
+
+require 'active_record'
 
 class Account < ActiveRecord::Base; end
 
 class TelnetAuth
-
   def initialize(connection)
     @connection = connection
 
