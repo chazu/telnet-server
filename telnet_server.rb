@@ -1,13 +1,16 @@
 $: << File.dirname(__FILE__) unless $:.include? File.dirname(__FILE__)
 
 require 'rubygems'
+require 'bundler'
+Bundler.setup
 require 'eventmachine'
+require 'socket'
 require 'telnet_auth'
 require 'telnet_shell'
 require 'ansi'
 require 'connection_manager'
 
-class TelnetServer < EM::Connection
+class TelnetServer < EventMachine::Connection
 
   #begin connection callbacks
   def post_init
@@ -52,7 +55,7 @@ class TelnetServer < EM::Connection
 
   def to_s
     str = @telnet_auth.username 
-    str += " (" + Socket.unpack_sockaddr_in(get_peername)[1].to_s + ")"
+    str += " (" + ::Socket.unpack_sockaddr_in(get_peername)[1].to_s + ")"
   end
 
   private 
@@ -83,7 +86,7 @@ ActiveRecord::Base.establish_connection(
   :database => "telnet.db"
 )
 
-EM::run {
-  EM::start_server("192.168.1.149", 8090, TelnetServer)
+EventMachine::run {
+  EventMachine::start_server("0.0.0.0", 8090, TelnetServer)
   puts "Telnet Server Started"
 }
